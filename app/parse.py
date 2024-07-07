@@ -7,6 +7,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
+from selenium.common.exceptions import NoSuchElementException, ElementNotInteractableException
 from tqdm import tqdm
 
 BASE_URL = "https://webscraper.io/"
@@ -52,7 +53,7 @@ def parse_single_page(url: str, driver: webdriver.Chrome) -> List[Product]:
         cookie_button = driver.find_elements(By.CLASS_NAME, "acceptCookies")
         if cookie_button:
             cookie_button[0].click()
-    except Exception as e:
+    except (NoSuchElementException, ElementNotInteractableException) as e:
         print("Cookie button not found or already accepted")
 
     while True:
@@ -65,7 +66,7 @@ def parse_single_page(url: str, driver: webdriver.Chrome) -> List[Product]:
                 time.sleep(0.8)
             else:
                 break
-        except Exception:
+        except (NoSuchElementException, ElementNotInteractableException):
             break
 
     product_elements = driver.find_elements(By.CLASS_NAME, "thumbnail")
